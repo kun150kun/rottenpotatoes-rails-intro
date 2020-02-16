@@ -13,13 +13,14 @@ class MoviesController < ApplicationController
   def index
     @all_ratings = Movie.all_ratings
     if not session.key?(:checked_rating)
-      Movie.checked_ratings = @all_ratings
+      session[:checked_rating] = @all_ratings
     end
-    @checked_rating = params[:ratings].present? ? params[:ratings].keys : Movie.checked_ratings
+    @checked_rating = params[:ratings].present? ? params[:ratings].keys : session[:checked_rating]
     @movies = Movie.with_rating(@checked_rating)
-    Movie.checked_ratings = @checked_rating
+    session[:checked_rating] = @checked_rating
 
-    col = params[:sort]
+    session[:sort] = params[:sort].present? ? params[:sort] : session[:sort]
+    col = session[:sort]
     @movies = @movies.order(col)
     if col == "title"
       @css_title_class = "hilite"
